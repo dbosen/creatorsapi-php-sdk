@@ -1,5 +1,5 @@
 {
-    "name": "dbosen/creatorsapi-php-sdk"
+    "name": "dbosen/creatorsapi-php-sdk",
     "version": "1.0.0",
     "description": "Fork of CreatorsAPI 1.0 PHP SDK",
     "keywords": [
