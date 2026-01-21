@@ -1,4 +1,7 @@
-# Creators API PHP SDK Example
+# Creators API PHP SDK
+
+This is a fork of the Amazon CreatorsAPI PHP SDK. I uploaded it to github and packagist to be able to require it with composer. 
+This fork does not contain any changes compared to the official Amazon zip file - besides these obvious changes in the readme.
 
 ## Prerequisites
 
