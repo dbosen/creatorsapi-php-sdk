@@ -57,13 +57,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => 'string',
         'languagesOfPreference' => 'string[]',
         'maxPrice' => 'float',
-        'merchant' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant',
         'minPrice' => 'float',
         'minReviewsRating' => 'float',
         'minSavingPercent' => 'float',
         'partnerTag' => 'string',
+        'properties' => 'array<string,string>',
         'resources' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\SearchItemsResource[]',
         'searchIndex' => 'string',
+        'sortBy' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\SortBy',
         'title' => 'string'
     ];
 
@@ -89,13 +90,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => null,
         'languagesOfPreference' => null,
         'maxPrice' => null,
-        'merchant' => null,
         'minPrice' => null,
         'minReviewsRating' => null,
         'minSavingPercent' => null,
         'partnerTag' => null,
+        'properties' => null,
         'resources' => null,
         'searchIndex' => null,
+        'sortBy' => null,
         'title' => null
     ];
 
@@ -119,13 +121,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => false,
         'languagesOfPreference' => false,
         'maxPrice' => false,
-        'merchant' => false,
         'minPrice' => false,
         'minReviewsRating' => false,
         'minSavingPercent' => false,
         'partnerTag' => false,
+        'properties' => false,
         'resources' => false,
         'searchIndex' => false,
+        'sortBy' => false,
         'title' => false
     ];
 
@@ -229,13 +232,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => 'keywords',
         'languagesOfPreference' => 'languagesOfPreference',
         'maxPrice' => 'maxPrice',
-        'merchant' => 'merchant',
         'minPrice' => 'minPrice',
         'minReviewsRating' => 'minReviewsRating',
         'minSavingPercent' => 'minSavingPercent',
         'partnerTag' => 'partnerTag',
+        'properties' => 'properties',
         'resources' => 'resources',
         'searchIndex' => 'searchIndex',
+        'sortBy' => 'sortBy',
         'title' => 'title'
     ];
 
@@ -259,13 +263,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => 'setKeywords',
         'languagesOfPreference' => 'setLanguagesOfPreference',
         'maxPrice' => 'setMaxPrice',
-        'merchant' => 'setMerchant',
         'minPrice' => 'setMinPrice',
         'minReviewsRating' => 'setMinReviewsRating',
         'minSavingPercent' => 'setMinSavingPercent',
         'partnerTag' => 'setPartnerTag',
+        'properties' => 'setProperties',
         'resources' => 'setResources',
         'searchIndex' => 'setSearchIndex',
+        'sortBy' => 'setSortBy',
         'title' => 'setTitle'
     ];
 
@@ -289,13 +294,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         'keywords' => 'getKeywords',
         'languagesOfPreference' => 'getLanguagesOfPreference',
         'maxPrice' => 'getMaxPrice',
-        'merchant' => 'getMerchant',
         'minPrice' => 'getMinPrice',
         'minReviewsRating' => 'getMinReviewsRating',
         'minSavingPercent' => 'getMinSavingPercent',
         'partnerTag' => 'getPartnerTag',
+        'properties' => 'getProperties',
         'resources' => 'getResources',
         'searchIndex' => 'getSearchIndex',
+        'sortBy' => 'getSortBy',
         'title' => 'getTitle'
     ];
 
@@ -370,13 +376,14 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         $this->setIfExists('keywords', $data ?? [], null);
         $this->setIfExists('languagesOfPreference', $data ?? [], null);
         $this->setIfExists('maxPrice', $data ?? [], null);
-        $this->setIfExists('merchant', $data ?? [], null);
         $this->setIfExists('minPrice', $data ?? [], null);
         $this->setIfExists('minReviewsRating', $data ?? [], null);
         $this->setIfExists('minSavingPercent', $data ?? [], null);
         $this->setIfExists('partnerTag', $data ?? [], null);
+        $this->setIfExists('properties', $data ?? [], null);
         $this->setIfExists('resources', $data ?? [], null);
         $this->setIfExists('searchIndex', $data ?? [], null);
+        $this->setIfExists('sortBy', $data ?? [], null);
         $this->setIfExists('title', $data ?? [], null);
     }
 
@@ -517,6 +524,10 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
 
         if (!is_null($this->container['partnerTag']) && !preg_match("/.*\\S.*/", $this->container['partnerTag'])) {
             $invalidProperties[] = "invalid value for 'partnerTag', must be conform to the pattern /.*\\S.*/.";
+        }
+
+        if (!is_null($this->container['properties']) && (count($this->container['properties']) > 2)) {
+            $invalidProperties[] = "invalid value for 'properties', number of items must be less than or equal to 2.";
         }
 
         if (!is_null($this->container['resources']) && (count($this->container['resources']) > 100)) {
@@ -1011,33 +1022,6 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
-     * Gets merchant
-     *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null
-     */
-    public function getMerchant()
-    {
-        return $this->container['merchant'];
-    }
-
-    /**
-     * Sets merchant
-     *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null $merchant merchant
-     *
-     * @return self
-     */
-    public function setMerchant($merchant)
-    {
-        if (is_null($merchant)) {
-            throw new \InvalidArgumentException('non-nullable merchant cannot be null');
-        }
-        $this->container['merchant'] = $merchant;
-
-        return $this;
-    }
-
-    /**
      * Gets minPrice
      *
      * @return float|null
@@ -1174,6 +1158,37 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
+     * Gets properties
+     *
+     * @return array<string,string>|null
+     */
+    public function getProperties()
+    {
+        return $this->container['properties'];
+    }
+
+    /**
+     * Sets properties
+     *
+     * @param array<string,string>|null $properties Reserved parameter for specifying key-value pairs. This is a flexible mechanism for passing additional context or metadata to the API.
+     *
+     * @return self
+     */
+    public function setProperties($properties)
+    {
+        if (is_null($properties)) {
+            throw new \InvalidArgumentException('non-nullable properties cannot be null');
+        }
+
+        if ((count($properties) > 2)) {
+            throw new \InvalidArgumentException('invalid value for $properties when calling SearchItemsRequestContent., number of items must be less than or equal to 2.');
+        }
+        $this->container['properties'] = $properties;
+
+        return $this;
+    }
+
+    /**
      * Gets resources
      *
      * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\SearchItemsResource[]|null
@@ -1234,6 +1249,33 @@ class SearchItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSer
         }
 
         $this->container['searchIndex'] = $searchIndex;
+
+        return $this;
+    }
+
+    /**
+     * Gets sortBy
+     *
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\SortBy|null
+     */
+    public function getSortBy()
+    {
+        return $this->container['sortBy'];
+    }
+
+    /**
+     * Sets sortBy
+     *
+     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\SortBy|null $sortBy sortBy
+     *
+     * @return self
+     */
+    public function setSortBy($sortBy)
+    {
+        if (is_null($sortBy)) {
+            throw new \InvalidArgumentException('non-nullable sortBy cannot be null');
+        }
+        $this->container['sortBy'] = $sortBy;
 
         return $this;
     }

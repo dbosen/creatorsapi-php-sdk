@@ -21,12 +21,10 @@ use \ArrayAccess;
 use \Amazon\CreatorsAPI\v1\ObjectSerializer;
 
 /**
- * VariationSummary Class Doc Comment
- *
- * @description The container for Variations Summary response. It consists of metadata of variations response like page numbers, number of variations, Price range and Variation Dimensions.
+ * GetReportRequestContent Class Doc Comment
  * @implements \ArrayAccess<string, mixed>
  */
-class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
+class GetReportRequestContent implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -35,7 +33,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'VariationSummary';
+    protected static $openAPIModelName = 'GetReportRequestContent';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -43,10 +41,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var string[]
       */
     protected static $openAPITypes = [
-        'pageCount' => 'float',
-        'price' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice',
-        'variationCount' => 'float',
-        'variationDimensions' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]'
+        'filename' => 'string'
     ];
 
     /**
@@ -57,10 +52,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'pageCount' => null,
-        'price' => null,
-        'variationCount' => null,
-        'variationDimensions' => null
+        'filename' => null
     ];
 
     /**
@@ -69,10 +61,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'pageCount' => false,
-        'price' => false,
-        'variationCount' => false,
-        'variationDimensions' => false
+        'filename' => false
     ];
 
     /**
@@ -161,10 +150,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $attributeMap = [
-        'pageCount' => 'pageCount',
-        'price' => 'price',
-        'variationCount' => 'variationCount',
-        'variationDimensions' => 'variationDimensions'
+        'filename' => 'filename'
     ];
 
     /**
@@ -173,10 +159,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $setters = [
-        'pageCount' => 'setPageCount',
-        'price' => 'setPrice',
-        'variationCount' => 'setVariationCount',
-        'variationDimensions' => 'setVariationDimensions'
+        'filename' => 'setFilename'
     ];
 
     /**
@@ -185,10 +168,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $getters = [
-        'pageCount' => 'getPageCount',
-        'price' => 'getPrice',
-        'variationCount' => 'getVariationCount',
-        'variationDimensions' => 'getVariationDimensions'
+        'filename' => 'getFilename'
     ];
 
     /**
@@ -248,10 +228,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('pageCount', $data ?? [], null);
-        $this->setIfExists('price', $data ?? [], null);
-        $this->setIfExists('variationCount', $data ?? [], null);
-        $this->setIfExists('variationDimensions', $data ?? [], null);
+        $this->setIfExists('filename', $data ?? [], null);
     }
 
     /**
@@ -281,6 +258,13 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
+        if ($this->container['filename'] === null) {
+            $invalidProperties[] = "'filename' can't be null";
+        }
+        if ((mb_strlen($this->container['filename']) < 1)) {
+            $invalidProperties[] = "invalid value for 'filename', the character length must be bigger than or equal to 1.";
+        }
+
         return $invalidProperties;
     }
 
@@ -297,109 +281,33 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
 
 
     /**
-     * Gets pageCount
+     * Gets filename
      *
-     * @return float|null
+     * @return string
      */
-    public function getPageCount()
+    public function getFilename()
     {
-        return $this->container['pageCount'];
+        return $this->container['filename'];
     }
 
     /**
-     * Sets pageCount
+     * Sets filename
      *
-     * @param float|null $pageCount Number of pages in the variation result set.
+     * @param string $filename filename
      *
      * @return self
      */
-    public function setPageCount($pageCount)
+    public function setFilename($filename)
     {
-        if (is_null($pageCount)) {
-            throw new \InvalidArgumentException('non-nullable pageCount cannot be null');
+        if (is_null($filename)) {
+            throw new \InvalidArgumentException('non-nullable filename cannot be null');
         }
-        $this->container['pageCount'] = $pageCount;
 
-        return $this;
-    }
-
-    /**
-     * Gets price
-     *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice|null
-     */
-    public function getPrice()
-    {
-        return $this->container['price'];
-    }
-
-    /**
-     * Sets price
-     *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice|null $price price
-     *
-     * @return self
-     */
-    public function setPrice($price)
-    {
-        if (is_null($price)) {
-            throw new \InvalidArgumentException('non-nullable price cannot be null');
+        if ((mb_strlen($filename) < 1)) {
+            throw new \InvalidArgumentException('invalid length for $filename when calling GetReportRequestContent., must be bigger than or equal to 1.');
         }
-        $this->container['price'] = $price;
 
-        return $this;
-    }
-
-    /**
-     * Gets variationCount
-     *
-     * @return float|null
-     */
-    public function getVariationCount()
-    {
-        return $this->container['variationCount'];
-    }
-
-    /**
-     * Sets variationCount
-     *
-     * @param float|null $variationCount Total number of variations available for the product. This represents the complete count of all child ASINs across all pages. Use this value along with pageCount to understand the full scope of available variations.
-     *
-     * @return self
-     */
-    public function setVariationCount($variationCount)
-    {
-        if (is_null($variationCount)) {
-            throw new \InvalidArgumentException('non-nullable variationCount cannot be null');
-        }
-        $this->container['variationCount'] = $variationCount;
-
-        return $this;
-    }
-
-    /**
-     * Gets variationDimensions
-     *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]|null
-     */
-    public function getVariationDimensions()
-    {
-        return $this->container['variationDimensions'];
-    }
-
-    /**
-     * Sets variationDimensions
-     *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]|null $variationDimensions List of variation dimensions associated with the product. Variation dimensions define the attributes on which products vary (e.g., size, color). Each dimension includes: - Display name and locale for presentation - Dimension name (internal identifier) - List of all possible values for that dimension  For example, a clothing item might have two dimensions: 'Size' with values ['S', 'M', 'L'] and 'Color' with values ['Red', 'Blue', 'Green']. These dimensions help users understand how variations differ from each other.
-     *
-     * @return self
-     */
-    public function setVariationDimensions($variationDimensions)
-    {
-        if (is_null($variationDimensions)) {
-            throw new \InvalidArgumentException('non-nullable variationDimensions cannot be null');
-        }
-        $this->container['variationDimensions'] = $variationDimensions;
+        $this->container['filename'] = $filename;
 
         return $this;
     }

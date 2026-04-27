@@ -21,12 +21,12 @@ use \ArrayAccess;
 use \Amazon\CreatorsAPI\v1\ObjectSerializer;
 
 /**
- * VariationSummary Class Doc Comment
+ * VariationSummaryPrice Class Doc Comment
  *
- * @description The container for Variations Summary response. It consists of metadata of variations response like page numbers, number of variations, Price range and Variation Dimensions.
+ * @description The container for highest and lowest price for variations.
  * @implements \ArrayAccess<string, mixed>
  */
-class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
+class VariationSummaryPrice implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -35,7 +35,7 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'VariationSummary';
+    protected static $openAPIModelName = 'VariationSummaryPrice';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -43,10 +43,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var string[]
       */
     protected static $openAPITypes = [
-        'pageCount' => 'float',
-        'price' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice',
-        'variationCount' => 'float',
-        'variationDimensions' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]'
+        'highestPrice' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money',
+        'lowestPrice' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money'
     ];
 
     /**
@@ -57,10 +55,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'pageCount' => null,
-        'price' => null,
-        'variationCount' => null,
-        'variationDimensions' => null
+        'highestPrice' => null,
+        'lowestPrice' => null
     ];
 
     /**
@@ -69,10 +65,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'pageCount' => false,
-        'price' => false,
-        'variationCount' => false,
-        'variationDimensions' => false
+        'highestPrice' => false,
+        'lowestPrice' => false
     ];
 
     /**
@@ -161,10 +155,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $attributeMap = [
-        'pageCount' => 'pageCount',
-        'price' => 'price',
-        'variationCount' => 'variationCount',
-        'variationDimensions' => 'variationDimensions'
+        'highestPrice' => 'highestPrice',
+        'lowestPrice' => 'lowestPrice'
     ];
 
     /**
@@ -173,10 +165,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $setters = [
-        'pageCount' => 'setPageCount',
-        'price' => 'setPrice',
-        'variationCount' => 'setVariationCount',
-        'variationDimensions' => 'setVariationDimensions'
+        'highestPrice' => 'setHighestPrice',
+        'lowestPrice' => 'setLowestPrice'
     ];
 
     /**
@@ -185,10 +175,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $getters = [
-        'pageCount' => 'getPageCount',
-        'price' => 'getPrice',
-        'variationCount' => 'getVariationCount',
-        'variationDimensions' => 'getVariationDimensions'
+        'highestPrice' => 'getHighestPrice',
+        'lowestPrice' => 'getLowestPrice'
     ];
 
     /**
@@ -248,10 +236,8 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('pageCount', $data ?? [], null);
-        $this->setIfExists('price', $data ?? [], null);
-        $this->setIfExists('variationCount', $data ?? [], null);
-        $this->setIfExists('variationDimensions', $data ?? [], null);
+        $this->setIfExists('highestPrice', $data ?? [], null);
+        $this->setIfExists('lowestPrice', $data ?? [], null);
     }
 
     /**
@@ -297,109 +283,55 @@ class VariationSummary implements ModelInterface, ArrayAccess, \JsonSerializable
 
 
     /**
-     * Gets pageCount
+     * Gets highestPrice
      *
-     * @return float|null
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money|null
      */
-    public function getPageCount()
+    public function getHighestPrice()
     {
-        return $this->container['pageCount'];
+        return $this->container['highestPrice'];
     }
 
     /**
-     * Sets pageCount
+     * Sets highestPrice
      *
-     * @param float|null $pageCount Number of pages in the variation result set.
+     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money|null $highestPrice highestPrice
      *
      * @return self
      */
-    public function setPageCount($pageCount)
+    public function setHighestPrice($highestPrice)
     {
-        if (is_null($pageCount)) {
-            throw new \InvalidArgumentException('non-nullable pageCount cannot be null');
+        if (is_null($highestPrice)) {
+            throw new \InvalidArgumentException('non-nullable highestPrice cannot be null');
         }
-        $this->container['pageCount'] = $pageCount;
+        $this->container['highestPrice'] = $highestPrice;
 
         return $this;
     }
 
     /**
-     * Gets price
+     * Gets lowestPrice
      *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice|null
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money|null
      */
-    public function getPrice()
+    public function getLowestPrice()
     {
-        return $this->container['price'];
+        return $this->container['lowestPrice'];
     }
 
     /**
-     * Sets price
+     * Sets lowestPrice
      *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationSummaryPrice|null $price price
+     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Money|null $lowestPrice lowestPrice
      *
      * @return self
      */
-    public function setPrice($price)
+    public function setLowestPrice($lowestPrice)
     {
-        if (is_null($price)) {
-            throw new \InvalidArgumentException('non-nullable price cannot be null');
+        if (is_null($lowestPrice)) {
+            throw new \InvalidArgumentException('non-nullable lowestPrice cannot be null');
         }
-        $this->container['price'] = $price;
-
-        return $this;
-    }
-
-    /**
-     * Gets variationCount
-     *
-     * @return float|null
-     */
-    public function getVariationCount()
-    {
-        return $this->container['variationCount'];
-    }
-
-    /**
-     * Sets variationCount
-     *
-     * @param float|null $variationCount Total number of variations available for the product. This represents the complete count of all child ASINs across all pages. Use this value along with pageCount to understand the full scope of available variations.
-     *
-     * @return self
-     */
-    public function setVariationCount($variationCount)
-    {
-        if (is_null($variationCount)) {
-            throw new \InvalidArgumentException('non-nullable variationCount cannot be null');
-        }
-        $this->container['variationCount'] = $variationCount;
-
-        return $this;
-    }
-
-    /**
-     * Gets variationDimensions
-     *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]|null
-     */
-    public function getVariationDimensions()
-    {
-        return $this->container['variationDimensions'];
-    }
-
-    /**
-     * Sets variationDimensions
-     *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\VariationDimension[]|null $variationDimensions List of variation dimensions associated with the product. Variation dimensions define the attributes on which products vary (e.g., size, color). Each dimension includes: - Display name and locale for presentation - Dimension name (internal identifier) - List of all possible values for that dimension  For example, a clothing item might have two dimensions: 'Size' with values ['S', 'M', 'L'] and 'Color' with values ['Red', 'Blue', 'Green']. These dimensions help users understand how variations differ from each other.
-     *
-     * @return self
-     */
-    public function setVariationDimensions($variationDimensions)
-    {
-        if (is_null($variationDimensions)) {
-            throw new \InvalidArgumentException('non-nullable variationDimensions cannot be null');
-        }
-        $this->container['variationDimensions'] = $variationDimensions;
+        $this->container['lowestPrice'] = $lowestPrice;
 
         return $this;
     }

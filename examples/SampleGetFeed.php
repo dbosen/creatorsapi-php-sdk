@@ -14,7 +14,12 @@
  * permissions and limitations under the License.
  */
 
-// Run `composer install` locally before executing the following code with `php SampleGetFeed.php`
+/**
+ * Sample script demonstrating how to use the CreatorsAPI PHP SDK for GetFeed API
+ * GetFeed operation retrieves a specific product feed file that your store has access to.
+ * 
+ * Run `composer install` before executing with `php SampleGetFeed.php`
+ */
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
@@ -23,61 +28,40 @@ use Amazon\CreatorsAPI\v1\com\amazon\creators\api\DefaultApi;
 use Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetFeedRequestContent;
 use Amazon\CreatorsAPI\v1\ApiException;
 
-/**
- * Sample function to demonstrate GetFeed API usage
- */
 function getFeed()
 {
-    // Create configuration with OAuth2 credentials
+    // Initialize configuration with credential details
     $config = new Configuration();
-    
-    // Specify your credentials here. 
-    // Please add your credential id here
     $config->setCredentialId("<YOUR CREDENTIAL ID>");
-    
-    // Please add your credential secret here
     $config->setCredentialSecret("<YOUR CREDENTIAL SECRET>");
-    
-    /**
-     * Please add your credential version here
-     * For eg-
-     * - 2.1 for North America (NA) region
-     * - 2.2 for Europe (EU) region 
-     * - 2.3 for Far East (FE) region
-     */
     $config->setVersion("<YOUR CREDENTIAL VERSION>");
     
-    // Request Initialization
-    $getFeedRequest = new GetFeedRequestContent();
+    // Initialize API
+    $api = new DefaultApi(null, $config);
     
-    // Specify Feed name that your store has access to, Feed name can be found from list feeds api response
-    // Eg- "us_standardized_apparel_retail.xml.gz"
-    $getFeedRequest->setFeedName("us_standardized_apparel_retail.xml.gz");
+    /**
+     * Add marketplace. For more details, refer: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/api-reference/common-request-headers-and-parameters#marketplace-locale-reference
+     */
+    $marketplace = "<YOUR MARKETPLACE>";
+    
+    // Create GetFeed request
+    // Add Feed name (can be found from ListFeeds API response)
+    $getFeedRequest = new GetFeedRequestContent();
+    $getFeedRequest->setFeedName("<YOUR FILENAME>");
     
     try {
-        // Create API instance with OAuth2 configuration
-        $apiInstance = new DefaultApi(null, $config);
-        
-        /**
-         * Specify the marketplace to which you want to send the request
-         * Eg- "www.amazon.com" for US marketplace
-         * For more details, refer: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/api-reference/common-request-headers-and-parameters#marketplace-locale-reference
-         */
-        $marketplace = "<YOUR MARKETPLACE>";
-        
         // Call the GetFeed API
-        $response = $apiInstance->getFeed($marketplace, $getFeedRequest);
+        $response = $api->getFeed($marketplace, $getFeedRequest);
         
-        echo 'API called successfully.' . PHP_EOL;
-        echo "Complete Response: " . PHP_EOL . json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        echo "API called successfully." . PHP_EOL;
+        echo "Complete Response:" . PHP_EOL . json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
         
     } catch (ApiException $e) {
-        echo 'Error calling Creators API!' . PHP_EOL;
+        echo "Error calling Creators API!" . PHP_EOL;
         echo $e . PHP_EOL;
     } catch (Exception $e) {
         echo "Unexpected error: " . $e . PHP_EOL;
     }
 }
 
-// Run the sample
 getFeed();
