@@ -95,10 +95,16 @@ class DefaultApi
         'getItems' => [
             'application/json',
         ],
+        'getReport' => [
+            'application/json',
+        ],
         'getVariations' => [
             'application/json',
         ],
         'listFeeds' => [
+            'application/json',
+        ],
+        'listReports' => [
             'application/json',
         ],
         'searchItems' => [
@@ -212,10 +218,17 @@ class DefaultApi
         // Get OAuth2 token (creates/recreates token manager if needed)
         $token = $this->getOrCreateTokenManager()->getToken();
         
-        // Build OAuth2 headers
-        $oauthHeaders = [
-            'Authorization' => "Bearer {$token}, Version {$this->config->getVersion()}"
-        ];
+        // Build OAuth2 headers - Version suffix only for v2.x (Cognito)
+        $version = $this->config->getVersion();
+        if (str_starts_with($version, "3.")) {
+            $oauthHeaders = [
+                'Authorization' => "Bearer {$token}"
+            ];
+        } else {
+            $oauthHeaders = [
+                'Authorization' => "Bearer {$token}, Version {$version}"
+            ];
+        }
         
         return $oauthHeaders;
     }
@@ -598,7 +611,7 @@ class DefaultApi
      *
      * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetFeedResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetFeedResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
      */
     public function getFeed($xMarketplace, $getFeedRequestContent, string $contentType = self::contentTypes['getFeed'][0])
     {
@@ -615,7 +628,7 @@ class DefaultApi
      *
      * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetFeedResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetFeedResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
      */
     public function getFeedWithHttpInfo($xMarketplace, $getFeedRequestContent, string $contentType = self::contentTypes['getFeed'][0])
     {
@@ -672,6 +685,12 @@ class DefaultApi
                 case 404:
                     return $this->handleResponseWithDataType(
                         '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 429:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
                         $request,
                         $response,
                     );
@@ -741,6 +760,14 @@ class DefaultApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 429:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1314,6 +1341,375 @@ class DefaultApi
     }
 
     /**
+     * Operation getReport
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent $getReportRequestContent getReportRequestContent (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getReport'] to see the possible values for this operation
+     *
+     * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
+     */
+    public function getReport($xMarketplace, $getReportRequestContent, string $contentType = self::contentTypes['getReport'][0])
+    {
+        list($response) = $this->getReportWithHttpInfo($xMarketplace, $getReportRequestContent, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation getReportWithHttpInfo
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent $getReportRequestContent (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getReport'] to see the possible values for this operation
+     *
+     * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function getReportWithHttpInfo($xMarketplace, $getReportRequestContent, string $contentType = self::contentTypes['getReport'][0])
+    {
+        $request = $this->getReportRequest($xMarketplace, $getReportRequestContent, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 400:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 401:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 403:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 404:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 429:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 500:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+            }
+
+            
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            return $this->handleResponseWithDataType(
+                '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent',
+                $request,
+                $response,
+            );
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 401:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 403:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 404:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 429:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 500:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+            }
+        
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation getReportAsync
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent $getReportRequestContent (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getReport'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getReportAsync($xMarketplace, $getReportRequestContent, string $contentType = self::contentTypes['getReport'][0])
+    {
+        return $this->getReportAsyncWithHttpInfo($xMarketplace, $getReportRequestContent, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation getReportAsyncWithHttpInfo
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent $getReportRequestContent (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getReport'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getReportAsyncWithHttpInfo($xMarketplace, $getReportRequestContent, string $contentType = self::contentTypes['getReport'][0])
+    {
+        $returnType = '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportResponseContent';
+        $request = $this->getReportRequest($xMarketplace, $getReportRequestContent, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'getReport'
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  \Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent $getReportRequestContent (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getReport'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function getReportRequest($xMarketplace, $getReportRequestContent, string $contentType = self::contentTypes['getReport'][0])
+    {
+
+        // verify the required parameter 'xMarketplace' is set
+        if ($xMarketplace === null || (is_array($xMarketplace) && count($xMarketplace) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $xMarketplace when calling getReport'
+            );
+        }
+        if (strlen($xMarketplace) > 1000) {
+            throw new \InvalidArgumentException('invalid length for "$xMarketplace" when calling DefaultApi.getReport, must be smaller than or equal to 1000.');
+        }
+        if (!preg_match("/.*\\S.*/", $xMarketplace)) {
+            throw new \InvalidArgumentException("invalid value for \"xMarketplace\" when calling DefaultApi.getReport, must conform to the pattern /.*\\S.*/.");
+        }
+        
+        // verify the required parameter 'getReportRequestContent' is set
+        if ($getReportRequestContent === null || (is_array($getReportRequestContent) && count($getReportRequestContent) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $getReportRequestContent when calling getReport'
+            );
+        }
+
+
+        $resourcePath = '/reports/v1/getReport';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+        // header params
+        if ($xMarketplace !== null) {
+            $headerParams['x-marketplace'] = ObjectSerializer::toHeaderValue($xMarketplace);
+        }
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // Build OAuth2 and custom headers
+        $authenticatedHeaders = $this->buildAuthenticatedHeaders($resourcePath);
+
+        // for model (json/xml)
+        if (isset($getReportRequestContent)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($getReportRequestContent));
+            } else {
+                $httpBody = $getReportRequestContent;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers,
+            $authenticatedHeaders
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation getVariations
      *
      * @param  string $xMarketplace Target Amazon Locale. This specifies the marketplace where the items should be searched. Example: &#39;www.amazon.com&#39; (required)
@@ -1690,7 +2086,7 @@ class DefaultApi
      *
      * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListFeedsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListFeedsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
      */
     public function listFeeds($xMarketplace, string $contentType = self::contentTypes['listFeeds'][0])
     {
@@ -1706,7 +2102,7 @@ class DefaultApi
      *
      * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListFeedsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListFeedsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
      */
     public function listFeedsWithHttpInfo($xMarketplace, string $contentType = self::contentTypes['listFeeds'][0])
     {
@@ -1763,6 +2159,12 @@ class DefaultApi
                 case 404:
                     return $this->handleResponseWithDataType(
                         '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 429:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
                         $request,
                         $response,
                     );
@@ -1832,6 +2234,14 @@ class DefaultApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 429:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1947,6 +2357,356 @@ class DefaultApi
         
 
         $resourcePath = '/catalog/v1/listFeeds';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+        // header params
+        if ($xMarketplace !== null) {
+            $headerParams['x-marketplace'] = ObjectSerializer::toHeaderValue($xMarketplace);
+        }
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // Build OAuth2 and custom headers
+        $authenticatedHeaders = $this->buildAuthenticatedHeaders($resourcePath);
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers,
+            $authenticatedHeaders
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation listReports
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listReports'] to see the possible values for this operation
+     *
+     * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent
+     */
+    public function listReports($xMarketplace, string $contentType = self::contentTypes['listReports'][0])
+    {
+        list($response) = $this->listReportsWithHttpInfo($xMarketplace, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation listReportsWithHttpInfo
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listReports'] to see the possible values for this operation
+     *
+     * @throws \Amazon\CreatorsAPI\v1\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent|\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function listReportsWithHttpInfo($xMarketplace, string $contentType = self::contentTypes['listReports'][0])
+    {
+        $request = $this->listReportsRequest($xMarketplace, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 400:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 401:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 403:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 404:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 429:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+                case 500:
+                    return $this->handleResponseWithDataType(
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent',
+                        $request,
+                        $response,
+                    );
+            }
+
+            
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            return $this->handleResponseWithDataType(
+                '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent',
+                $request,
+                $response,
+            );
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ValidationExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 401:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\UnauthorizedExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 403:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\AccessDeniedExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 404:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ResourceNotFoundExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 429:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ThrottleExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 500:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\InternalServerExceptionResponseContent',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+            }
+        
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation listReportsAsync
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listReports'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function listReportsAsync($xMarketplace, string $contentType = self::contentTypes['listReports'][0])
+    {
+        return $this->listReportsAsyncWithHttpInfo($xMarketplace, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation listReportsAsyncWithHttpInfo
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listReports'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function listReportsAsyncWithHttpInfo($xMarketplace, string $contentType = self::contentTypes['listReports'][0])
+    {
+        $returnType = '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ListReportsResponseContent';
+        $request = $this->listReportsRequest($xMarketplace, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'listReports'
+     *
+     * @param  string $xMarketplace Target Amazon Locale. (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['listReports'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function listReportsRequest($xMarketplace, string $contentType = self::contentTypes['listReports'][0])
+    {
+
+        // verify the required parameter 'xMarketplace' is set
+        if ($xMarketplace === null || (is_array($xMarketplace) && count($xMarketplace) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $xMarketplace when calling listReports'
+            );
+        }
+        if (strlen($xMarketplace) > 1000) {
+            throw new \InvalidArgumentException('invalid length for "$xMarketplace" when calling DefaultApi.listReports, must be smaller than or equal to 1000.');
+        }
+        if (!preg_match("/.*\\S.*/", $xMarketplace)) {
+            throw new \InvalidArgumentException("invalid value for \"xMarketplace\" when calling DefaultApi.listReports, must conform to the pattern /.*\\S.*/.");
+        }
+        
+
+        $resourcePath = '/reports/v1/listReports';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];

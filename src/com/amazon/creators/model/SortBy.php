@@ -19,18 +19,26 @@ namespace Amazon\CreatorsAPI\v1\com\amazon\creators\model;
 use \Amazon\CreatorsAPI\v1\ObjectSerializer;
 
 /**
- * Condition Class Doc Comment
+ * SortBy Class Doc Comment
  *
- * @description The condition parameter filters offers by condition type.
+ * @description Specifies the way in which items in the response are sorted.
  */
-class Condition
+class SortBy
 {
     /**
      * Possible values of this enum
      */
-    public const ANY = 'Any';
+    public const AVG_CUSTOMER_REVIEWS = 'AvgCustomerReviews';
 
-    public const _NEW = 'New';
+    public const FEATURED = 'Featured';
+
+    public const NEWEST_ARRIVALS = 'NewestArrivals';
+
+    public const PRICEHIGH_TO_LOW = 'Price:HighToLow';
+
+    public const PRICELOW_TO_HIGH = 'Price:LowToHigh';
+
+    public const RELEVANCE = 'Relevance';
 
     /**
      * Gets allowable values of the enum
@@ -39,8 +47,12 @@ class Condition
     public static function getAllowableEnumValues()
     {
         return [
-            self::ANY,
-            self::_NEW
+            self::AVG_CUSTOMER_REVIEWS,
+            self::FEATURED,
+            self::NEWEST_ARRIVALS,
+            self::PRICEHIGH_TO_LOW,
+            self::PRICELOW_TO_HIGH,
+            self::RELEVANCE
         ];
     }
 }

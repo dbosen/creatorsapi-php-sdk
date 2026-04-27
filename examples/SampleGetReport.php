@@ -15,22 +15,20 @@
  */
 
 /**
- * Sample script demonstrating how to use the CreatorsAPI PHP SDK for GetItems API
- * GetItems operation retrieves item information for specified ASINs including
- * images, item info, offers, and other detailed product data.
+ * Sample script demonstrating how to use the CreatorsAPI PHP SDK for GetReport API
+ * GetReport operation retrieves a specific report file for your store.
  * 
- * Run `composer install` before executing with `php SampleGetItems.php`
+ * Run `composer install` before executing with `php SampleGetReport.php`
  */
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 use Amazon\CreatorsAPI\v1\Configuration;
 use Amazon\CreatorsAPI\v1\com\amazon\creators\api\DefaultApi;
-use Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetItemsRequestContent;
-use Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetItemsResource;
+use Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetReportRequestContent;
 use Amazon\CreatorsAPI\v1\ApiException;
 
-function getItems()
+function getReport()
 {
     // Initialize configuration with credential details
     $config = new Configuration();
@@ -46,29 +44,14 @@ function getItems()
      */
     $marketplace = "<YOUR MARKETPLACE>";
     
-    /**
-     * Choose resources you want from GetItemsResource enum
-     * For more details, refer: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/api-reference/operations/get-items#resources-parameter
-     */
-    $resources = [
-        GetItemsResource::IMAGES_PRIMARY_MEDIUM,
-        GetItemsResource::ITEM_INFO_TITLE,
-        GetItemsResource::ITEM_INFO_FEATURES,
-        GetItemsResource::OFFERS_V2_LISTINGS_PRICE,
-        GetItemsResource::OFFERS_V2_LISTINGS_AVAILABILITY,
-        GetItemsResource::OFFERS_V2_LISTINGS_CONDITION,
-        GetItemsResource::OFFERS_V2_LISTINGS_MERCHANT_INFO
-    ];
-    
-    // Create GetItems request
-    $getItemsRequest = new GetItemsRequestContent();
-    $getItemsRequest->setPartnerTag("<YOUR PARTNER TAG>");
-    $getItemsRequest->setItemIds(['B0DLFMFBJW', 'B0BFC7WQ6R', 'B00ZV9RDKK']);
-    $getItemsRequest->setResources($resources);
+    // Create GetReport request
+    // Specify report filename (can be found from ListReports API response)
+    $getReportRequest = new GetReportRequestContent();
+    $getReportRequest->setFilename("<YOUR FILENAME>");
     
     try {
-        // Call the GetItems API
-        $response = $api->getItems($marketplace, $getItemsRequest);
+        // Call the GetReport API
+        $response = $api->getReport($marketplace, $getReportRequest);
         
         echo "API called successfully." . PHP_EOL;
         echo "Complete Response:" . PHP_EOL . json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
@@ -81,4 +64,4 @@ function getItems()
     }
 }
 
-getItems();
+getReport();

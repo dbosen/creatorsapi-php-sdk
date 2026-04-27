@@ -43,12 +43,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static $openAPITypes = [
         'partnerTag' => 'string',
         'itemIds' => 'string[]',
-        'additionalOffers' => 'bool',
         'condition' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Condition',
         'currencyOfPreference' => 'string',
-        'itemIdType' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\ItemIdType',
         'languagesOfPreference' => 'string[]',
-        'merchant' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant',
+        'properties' => 'array<string,string>',
         'resources' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetItemsResource[]'
     ];
 
@@ -62,12 +60,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static $openAPIFormats = [
         'partnerTag' => null,
         'itemIds' => null,
-        'additionalOffers' => null,
         'condition' => null,
         'currencyOfPreference' => null,
-        'itemIdType' => null,
         'languagesOfPreference' => null,
-        'merchant' => null,
+        'properties' => null,
         'resources' => null
     ];
 
@@ -79,12 +75,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static array $openAPINullables = [
         'partnerTag' => false,
         'itemIds' => false,
-        'additionalOffers' => false,
         'condition' => false,
         'currencyOfPreference' => false,
-        'itemIdType' => false,
         'languagesOfPreference' => false,
-        'merchant' => false,
+        'properties' => false,
         'resources' => false
     ];
 
@@ -176,12 +170,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static $attributeMap = [
         'partnerTag' => 'partnerTag',
         'itemIds' => 'itemIds',
-        'additionalOffers' => 'additionalOffers',
         'condition' => 'condition',
         'currencyOfPreference' => 'currencyOfPreference',
-        'itemIdType' => 'itemIdType',
         'languagesOfPreference' => 'languagesOfPreference',
-        'merchant' => 'merchant',
+        'properties' => 'properties',
         'resources' => 'resources'
     ];
 
@@ -193,12 +185,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static $setters = [
         'partnerTag' => 'setPartnerTag',
         'itemIds' => 'setItemIds',
-        'additionalOffers' => 'setAdditionalOffers',
         'condition' => 'setCondition',
         'currencyOfPreference' => 'setCurrencyOfPreference',
-        'itemIdType' => 'setItemIdType',
         'languagesOfPreference' => 'setLanguagesOfPreference',
-        'merchant' => 'setMerchant',
+        'properties' => 'setProperties',
         'resources' => 'setResources'
     ];
 
@@ -210,12 +200,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     protected static $getters = [
         'partnerTag' => 'getPartnerTag',
         'itemIds' => 'getItemIds',
-        'additionalOffers' => 'getAdditionalOffers',
         'condition' => 'getCondition',
         'currencyOfPreference' => 'getCurrencyOfPreference',
-        'itemIdType' => 'getItemIdType',
         'languagesOfPreference' => 'getLanguagesOfPreference',
-        'merchant' => 'getMerchant',
+        'properties' => 'getProperties',
         'resources' => 'getResources'
     ];
 
@@ -278,12 +266,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     {
         $this->setIfExists('partnerTag', $data ?? [], null);
         $this->setIfExists('itemIds', $data ?? [], null);
-        $this->setIfExists('additionalOffers', $data ?? [], null);
         $this->setIfExists('condition', $data ?? [], null);
         $this->setIfExists('currencyOfPreference', $data ?? [], null);
-        $this->setIfExists('itemIdType', $data ?? [], null);
         $this->setIfExists('languagesOfPreference', $data ?? [], null);
-        $this->setIfExists('merchant', $data ?? [], null);
+        $this->setIfExists('properties', $data ?? [], null);
         $this->setIfExists('resources', $data ?? [], null);
     }
 
@@ -346,6 +332,10 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
 
         if (!is_null($this->container['languagesOfPreference']) && (count($this->container['languagesOfPreference']) > 1)) {
             $invalidProperties[] = "invalid value for 'languagesOfPreference', number of items must be less than or equal to 1.";
+        }
+
+        if (!is_null($this->container['properties']) && (count($this->container['properties']) > 2)) {
+            $invalidProperties[] = "invalid value for 'properties', number of items must be less than or equal to 2.";
         }
 
         if (!is_null($this->container['resources']) && (count($this->container['resources']) > 100)) {
@@ -436,33 +426,6 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     }
 
     /**
-     * Gets additionalOffers
-     *
-     * @return bool|null
-     */
-    public function getAdditionalOffers()
-    {
-        return $this->container['additionalOffers'];
-    }
-
-    /**
-     * Sets additionalOffers
-     *
-     * @param bool|null $additionalOffers Whether to retrieve additional offers outside the featured winners
-     *
-     * @return self
-     */
-    public function setAdditionalOffers($additionalOffers)
-    {
-        if (is_null($additionalOffers)) {
-            throw new \InvalidArgumentException('non-nullable additionalOffers cannot be null');
-        }
-        $this->container['additionalOffers'] = $additionalOffers;
-
-        return $this;
-    }
-
-    /**
      * Gets condition
      *
      * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Condition|null
@@ -524,33 +487,6 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     }
 
     /**
-     * Gets itemIdType
-     *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ItemIdType|null
-     */
-    public function getItemIdType()
-    {
-        return $this->container['itemIdType'];
-    }
-
-    /**
-     * Sets itemIdType
-     *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\ItemIdType|null $itemIdType itemIdType
-     *
-     * @return self
-     */
-    public function setItemIdType($itemIdType)
-    {
-        if (is_null($itemIdType)) {
-            throw new \InvalidArgumentException('non-nullable itemIdType cannot be null');
-        }
-        $this->container['itemIdType'] = $itemIdType;
-
-        return $this;
-    }
-
-    /**
      * Gets languagesOfPreference
      *
      * @return string[]|null
@@ -582,28 +518,32 @@ class GetItemsRequestContent implements ModelInterface, ArrayAccess, \JsonSerial
     }
 
     /**
-     * Gets merchant
+     * Gets properties
      *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null
+     * @return array<string,string>|null
      */
-    public function getMerchant()
+    public function getProperties()
     {
-        return $this->container['merchant'];
+        return $this->container['properties'];
     }
 
     /**
-     * Sets merchant
+     * Sets properties
      *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null $merchant merchant
+     * @param array<string,string>|null $properties Reserved parameter for specifying key-value pairs. This is a flexible mechanism for passing additional context or metadata to the API.
      *
      * @return self
      */
-    public function setMerchant($merchant)
+    public function setProperties($properties)
     {
-        if (is_null($merchant)) {
-            throw new \InvalidArgumentException('non-nullable merchant cannot be null');
+        if (is_null($properties)) {
+            throw new \InvalidArgumentException('non-nullable properties cannot be null');
         }
-        $this->container['merchant'] = $merchant;
+
+        if ((count($properties) > 2)) {
+            throw new \InvalidArgumentException('invalid value for $properties when calling GetItemsRequestContent., number of items must be less than or equal to 2.');
+        }
+        $this->container['properties'] = $properties;
 
         return $this;
     }

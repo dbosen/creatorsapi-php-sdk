@@ -48,7 +48,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Condition',
         'currencyOfPreference' => 'string',
         'languagesOfPreference' => 'string[]',
-        'merchant' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant',
+        'properties' => 'array<string,string>',
         'resources' => '\Amazon\CreatorsAPI\v1\com\amazon\creators\model\GetVariationsResource[]',
         'variationCount' => 'float',
         'variationPage' => 'float'
@@ -67,7 +67,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => null,
         'currencyOfPreference' => null,
         'languagesOfPreference' => null,
-        'merchant' => null,
+        'properties' => null,
         'resources' => null,
         'variationCount' => null,
         'variationPage' => null
@@ -84,7 +84,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => false,
         'currencyOfPreference' => false,
         'languagesOfPreference' => false,
-        'merchant' => false,
+        'properties' => false,
         'resources' => false,
         'variationCount' => false,
         'variationPage' => false
@@ -181,7 +181,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => 'condition',
         'currencyOfPreference' => 'currencyOfPreference',
         'languagesOfPreference' => 'languagesOfPreference',
-        'merchant' => 'merchant',
+        'properties' => 'properties',
         'resources' => 'resources',
         'variationCount' => 'variationCount',
         'variationPage' => 'variationPage'
@@ -198,7 +198,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => 'setCondition',
         'currencyOfPreference' => 'setCurrencyOfPreference',
         'languagesOfPreference' => 'setLanguagesOfPreference',
-        'merchant' => 'setMerchant',
+        'properties' => 'setProperties',
         'resources' => 'setResources',
         'variationCount' => 'setVariationCount',
         'variationPage' => 'setVariationPage'
@@ -215,7 +215,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         'condition' => 'getCondition',
         'currencyOfPreference' => 'getCurrencyOfPreference',
         'languagesOfPreference' => 'getLanguagesOfPreference',
-        'merchant' => 'getMerchant',
+        'properties' => 'getProperties',
         'resources' => 'getResources',
         'variationCount' => 'getVariationCount',
         'variationPage' => 'getVariationPage'
@@ -283,7 +283,7 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
         $this->setIfExists('condition', $data ?? [], null);
         $this->setIfExists('currencyOfPreference', $data ?? [], null);
         $this->setIfExists('languagesOfPreference', $data ?? [], null);
-        $this->setIfExists('merchant', $data ?? [], null);
+        $this->setIfExists('properties', $data ?? [], null);
         $this->setIfExists('resources', $data ?? [], null);
         $this->setIfExists('variationCount', $data ?? [], null);
         $this->setIfExists('variationPage', $data ?? [], null);
@@ -344,6 +344,10 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
 
         if (!is_null($this->container['languagesOfPreference']) && (count($this->container['languagesOfPreference']) > 1)) {
             $invalidProperties[] = "invalid value for 'languagesOfPreference', number of items must be less than or equal to 1.";
+        }
+
+        if (!is_null($this->container['properties']) && (count($this->container['properties']) > 2)) {
+            $invalidProperties[] = "invalid value for 'properties', number of items must be less than or equal to 2.";
         }
 
         if (!is_null($this->container['resources']) && (count($this->container['resources']) > 100)) {
@@ -536,28 +540,32 @@ class GetVariationsRequestContent implements ModelInterface, ArrayAccess, \JsonS
     }
 
     /**
-     * Gets merchant
+     * Gets properties
      *
-     * @return \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null
+     * @return array<string,string>|null
      */
-    public function getMerchant()
+    public function getProperties()
     {
-        return $this->container['merchant'];
+        return $this->container['properties'];
     }
 
     /**
-     * Sets merchant
+     * Sets properties
      *
-     * @param \Amazon\CreatorsAPI\v1\com\amazon\creators\model\Merchant|null $merchant merchant
+     * @param array<string,string>|null $properties Reserved parameter for specifying key-value pairs. This is a flexible mechanism for passing additional context or metadata to the API.
      *
      * @return self
      */
-    public function setMerchant($merchant)
+    public function setProperties($properties)
     {
-        if (is_null($merchant)) {
-            throw new \InvalidArgumentException('non-nullable merchant cannot be null');
+        if (is_null($properties)) {
+            throw new \InvalidArgumentException('non-nullable properties cannot be null');
         }
-        $this->container['merchant'] = $merchant;
+
+        if ((count($properties) > 2)) {
+            throw new \InvalidArgumentException('invalid value for $properties when calling GetVariationsRequestContent., number of items must be less than or equal to 2.');
+        }
+        $this->container['properties'] = $properties;
 
         return $this;
     }
