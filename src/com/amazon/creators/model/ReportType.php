@@ -19,18 +19,18 @@ namespace Amazon\CreatorsAPI\v1\com\amazon\creators\model;
 use \Amazon\CreatorsAPI\v1\ObjectSerializer;
 
 /**
- * Merchant Class Doc Comment
+ * ReportType Class Doc Comment
  *
- * @description The merchant parameter filters offers by merchant.
+ * @description The source program a report belongs to. Stamped on ListReports response entries under the enforced treatment so callers can distinguish Creator Central from Creator Connections reports and route GetReport explicitly.
  */
-class Merchant
+class ReportType
 {
     /**
      * Possible values of this enum
      */
-    public const ALL = 'All';
+    public const CENTRAL = 'CREATOR_CENTRAL';
 
-    public const AMAZON = 'Amazon';
+    public const CONNECTIONS = 'CREATOR_CONNECTIONS';
 
     /**
      * Gets allowable values of the enum
@@ -39,8 +39,8 @@ class Merchant
     public static function getAllowableEnumValues()
     {
         return [
-            self::ALL,
-            self::AMAZON
+            self::CENTRAL,
+            self::CONNECTIONS
         ];
     }
 }

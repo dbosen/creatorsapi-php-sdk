@@ -19,14 +19,16 @@ namespace Amazon\CreatorsAPI\v1\com\amazon\creators\model;
 use \Amazon\CreatorsAPI\v1\ObjectSerializer;
 
 /**
- * ItemIdType Class Doc Comment
+ * FeedType Class Doc Comment
  */
-class ItemIdType
+class FeedType
 {
     /**
      * Possible values of this enum
      */
-    public const ASIN = 'ASIN';
+    public const PRODUCT_FEEDS = 'PRODUCT_FEEDS';
+
+    public const DEALS_FEEDS = 'DEALS_FEEDS';
 
     /**
      * Gets allowable values of the enum
@@ -35,7 +37,8 @@ class ItemIdType
     public static function getAllowableEnumValues()
     {
         return [
-            self::ASIN
+            self::PRODUCT_FEEDS,
+            self::DEALS_FEEDS
         ];
     }
 }

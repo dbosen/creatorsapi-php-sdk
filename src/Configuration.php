@@ -111,7 +111,7 @@ class Configuration
      *
      * @var string
      */
-    protected $userAgent = 'creatorsapi-php-sdk/1.2.0';
+    protected $userAgent = 'creatorsapi-php-sdk/1.3.0';
 
     /**
      * Debug switch (default set to false)
