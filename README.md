@@ -35,7 +35,7 @@ Before running the samples, you'll need to configure your API credentials in the
 
 - `<YOUR CREDENTIAL ID>` - Your API credential ID
 - `<YOUR CREDENTIAL SECRET>` - Your API credential secret  
-- `<YOUR CREDENTIAL VERSION>` - Your credential version (e.g., "2.1" for NA, "2.2" for EU, "2.3" for FE region)
+- `<YOUR CREDENTIAL VERSION>` - Your credential version (e.g., "2.1" for NA, "2.2" for EU, "2.3" for FE with Cognito; "3.1" for NA, "3.2" for EU, "3.3" for FE with LWA)
 - `<YOUR MARKETPLACE>` - Your marketplace (e.g., "www.amazon.com" for US marketplace)
 - `<YOUR PARTNER TAG>` - Add valid Partner Tag for the requested marketplace in applicable sample code snippet files
 
